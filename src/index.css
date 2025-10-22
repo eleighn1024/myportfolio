@@ -1,0 +1,34 @@
+/* src/index.css */
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tus estilos personalizados (opcional) */
+
+body {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+@layer base {
+  h1 {
+    @apply text-2xl font-bold;
+  }
+  p {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition;
+  }
+  .container {
+    @apply w-full max-w-6xl mx-auto px-4;
+  }
+}
+
+@layer utilities {
+  .shadow-lg-hover {
+    @apply hover:shadow-lg;
+  }
+}
