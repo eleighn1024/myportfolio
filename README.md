@@ -1,6 +1,5 @@
 # 🚀 React Portfolio Template (Systems Engineer Edition)
 
-![Portfolio screenshot](./public/img/optimized/yakov-dev.webp)
 
 A **modern, ATS-friendly, and SEO-optimized** portfolio template built with **React 19**, **Vite**, and **Tailwind CSS** — designed for **systems engineers, DevOps specialists, full-stack developers, and infrastructure architects** with deep technical experience.
 
@@ -23,7 +22,6 @@ A **modern, ATS-friendly, and SEO-optimized** portfolio template built with **Re
 
 ### 1. Use this repo as a template
 
-Click **["Use this template"](https://github.com/yakovyakov/react-portfolio-template/generate)** → **"Create a new repository"**.
 
 ### 2. Clone your new repo
 
@@ -144,13 +142,11 @@ src/
 
 ## 📸 Screenshots
 
-![Desktop view](./public/img/optimized/yakov-dev.webp)
 
 ---
 
 ## 📬 Need Help or Have Suggestions?
 
-Open an [Issue](https://github.com/yakovyakov/react-portfolio-template/issues)!  
 ⭐ **Star this repo** if you find it useful!
 
 ---
