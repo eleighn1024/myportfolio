@@ -49,8 +49,18 @@ export default function Contact() {
 
   const sendEmail = async (e) => {
     e.preventDefault();
+    console.log('sendEmail called. ENV:',
+      {
+        SERVICE: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        TEMPLATE_EN: import.meta.env.VITE_EMAILJS_TEMPLATE_EN_ID,
+        TEMPLATE_ES: import.meta.env.VITE_EMAILJS_TEMPLATE_ES_ID,
+        PUBLIC_KEY: !!import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+        CONTACT_EMAIL: import.meta.env.VITE_CONTACT_EMAIL
+      }
+    );
+
     const form = formRef.current;
-    if (!form) return;
+    if (!form) { console.warn('form ref missing'); return; }
 
     const formData = new FormData(form);
     const name = (formData.get('user_name') || '').toString().trim();
