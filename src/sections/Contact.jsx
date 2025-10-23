@@ -11,10 +11,17 @@ export default function Contact() {
 
   useEffect(() => {
     const key = (import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '').trim();
+    console.log('EMAILJS ENV', {
+      SERVICE: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      TEMPLATE_EN: import.meta.env.VITE_EMAILJS_TEMPLATE_EN_ID,
+      TEMPLATE_ES: import.meta.env.VITE_EMAILJS_TEMPLATE_ES_ID,
+      PUBLIC_KEY_PRESENT: !!key,
+      CONTACT_EMAIL: import.meta.env.VITE_CONTACT_EMAIL
+    });
     if (key) {
       try {
         emailjs.init(key);
-        console.debug('emailjs.init OK');
+        console.log('emailjs.init OK');
       } catch (err) {
         console.warn('emailjs.init failed', err);
       }
