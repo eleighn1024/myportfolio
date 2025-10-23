@@ -49,15 +49,13 @@ export default function Contact() {
 
   const sendEmail = async (e) => {
     e.preventDefault();
-    console.log('sendEmail called. ENV:',
-      {
-        SERVICE: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        TEMPLATE_EN: import.meta.env.VITE_EMAILJS_TEMPLATE_EN_ID,
-        TEMPLATE_ES: import.meta.env.VITE_EMAILJS_TEMPLATE_ES_ID,
-        PUBLIC_KEY: !!import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-        CONTACT_EMAIL: import.meta.env.VITE_CONTACT_EMAIL
-      }
-    );
+
+    console.log('sendEmail called');
+    console.log('runtime env:', {
+      service: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      template: lang === 'es' ? import.meta.env.VITE_EMAILJS_TEMPLATE_ES_ID : import.meta.env.VITE_EMAILJS_TEMPLATE_EN_ID,
+      publicKeyPresent: !!import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    });
 
     const form = formRef.current;
     if (!form) { console.warn('form ref missing'); return; }
@@ -66,6 +64,8 @@ export default function Contact() {
     const name = (formData.get('user_name') || '').toString().trim();
     const email = (formData.get('user_email') || '').toString().trim();
     const message = (formData.get('message') || '').toString().trim();
+
+    console.log('form payload', { name, email, message, contact_email: SITE_DATA?.email });
 
     if (!name || !email || !message) {
       setStatus({ type: 'error', message: t.contact.form.emptyFields || 'Please fill all fields.', fading: false });
@@ -94,8 +94,13 @@ export default function Contact() {
 
     try {
       // sendForm will read inputs in the <form> (names must match template variables)
-      const resp = await emailjs.sendForm(serviceId, templateId, form, publicKey);
-      console.debug('EmailJS send success', resp);
+      const resp = await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        lang === 'es' ? import.meta.env.VITE_EMAILJS_TEMPLATE_ES_ID : import.meta.env.VITE_EMAILJS_TEMPLATE_EN_ID,
+        form,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+      console.log('EmailJS send success', resp);
       setStatus({ type: 'success', message: t.contact.form.success || "Message sent! I'll get back to you soon.", fading: false });
       clearStatusAfter();
       form.reset();
