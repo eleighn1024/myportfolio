@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from '../contexts/translationContext';
 import { SITE_DATA } from '../configs/data/site';
 
-const Contact = () => {
+export default function Contact() {
   const { t, lang } = useTranslation();
   const formRef = useRef(null);
   const [isSending, setIsSending] = useState(false);
@@ -12,7 +12,14 @@ const Contact = () => {
   useEffect(() => {
     const key = (import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '').trim();
     if (key) {
-      try { emailjs.init(key); } catch (err) { console.warn('EmailJS init failed', err); }
+      try {
+        emailjs.init(key);
+        console.debug('emailjs.init OK');
+      } catch (err) {
+        console.warn('emailjs.init failed', err);
+      }
+    } else {
+      console.warn('No EmailJS public key found in env');
     }
   }, []);
 
@@ -55,32 +62,32 @@ const Contact = () => {
       return;
     }
 
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = getTemplateId();
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error('EmailJS config missing', { serviceId, templateId, publicKeyPresent: !!publicKey });
+      setStatus({ type: 'error', message: 'Email service is not configured. Check .env.local', fading: false });
+      return;
+    }
+
     setIsSending(true);
     setStatus({ type: '', message: '' });
 
-    const templateParams = {
-      from_name: name,
-      from_email: email,
-      message,
-      time: new Date().toLocaleString(),
-      page_url: typeof window !== 'undefined' ? window.location.href : '',
-      contact_email: SITE_DATA?.email || ''
-    };
-
     try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        getTemplateId(),
-        templateParams,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-      );
-
+      // sendForm will read inputs in the <form> (names must match template variables)
+      const resp = await emailjs.sendForm(serviceId, templateId, form, publicKey);
+      console.debug('EmailJS send success', resp);
       setStatus({ type: 'success', message: t.contact.form.success || "Message sent! I'll get back to you soon.", fading: false });
       clearStatusAfter();
       form.reset();
     } catch (error) {
-      console.error('EmailJS error:', error);
-      setStatus({ type: 'error', message: t.contact.form.error || 'There was an error. Please try again later.', fading: false });
+      // try to extract useful message
+      console.error('EmailJS send failed (full):', error);
+      const detailed = (error && (error.text || error.message)) ? (error.text || error.message) : null;
+      const userMessage = detailed || t.contact.form.error || 'There was an error. Please try again later.';
+      setStatus({ type: 'error', message: userMessage, fading: false });
       clearStatusAfter();
     } finally {
       setIsSending(false);
@@ -127,6 +134,9 @@ const Contact = () => {
             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
 
+          {/* hidden field so template can use contact_email as recipient or display */}
+          <input type="hidden" name="contact_email" value={SITE_DATA?.email || ''} />
+
           <button
             type="submit"
             disabled={isSending}
@@ -138,6 +148,4 @@ const Contact = () => {
       </div>
     </section>
   );
-};
-
-export default Contact;
+}
