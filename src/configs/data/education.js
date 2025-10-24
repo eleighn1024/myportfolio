@@ -3,7 +3,7 @@ export const EDUCATION_DATA = [
   {
     id: "Bachelor of Science in Information Technology",
     school: "Western Institute of Technology",
-    year: "2023-2027
+    year: "2023-2027"
   
   },
   {
